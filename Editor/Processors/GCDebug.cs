@@ -36,6 +36,9 @@ namespace Anatawa12.AvatarOptimizer.Processors
 
             if (BugReportHelper.Context.Current is { } reportCtx)
             {
+                if (_position == InternalGcDebugPosition.AtTheBeginning)
+                    reportCtx.AddTraceAndOptimizeStateReport(context);
+
                 var place = new GameObject();
                 try
                 {

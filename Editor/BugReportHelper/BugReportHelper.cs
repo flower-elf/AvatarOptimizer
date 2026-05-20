@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Anatawa12.AvatarOptimizer.AnimatorParsersV2;
 using Anatawa12.AvatarOptimizer.Processors;
+using Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes;
 using nadena.dev.ndmf;
 using nadena.dev.ndmf.platform;
 using Newtonsoft.Json;
@@ -1204,6 +1205,71 @@ internal class Context
         ReportFile.AddFile($"AvatarInfo.{position}.tree.txt", BugReportHelper.CollectAvatarInfo(root));
         ReportFile.AddFile($"MaterialInformation.{position}.tree.txt", 
             BugReportHelper.MaterialInformation(root.transform, materials));
+    }
+
+    public void AddTraceAndOptimizeStateReport(BuildContext context)
+    {
+        var state = context.GetState<TraceAndOptimizeState>();
+        var avatarRoot = context.AvatarRootObject;
+
+        string GetPath(GameObject? go) =>
+            go == null ? "<null>" : Utils.RelativePath(avatarRoot.transform, go.transform) ?? go.name;
+
+        var stateObj = new
+        {
+            // optimization options
+            AllowShuffleMaterialSlots = state.AllowShuffleMaterialSlots,
+            MmdWorldCompatibility = state.MmdWorldCompatibility,
+            PreserveEndBone = state.PreserveEndBone,
+
+            // debug options
+            Exclusions = state.Exclusions.Select(GetPath).OrderBy(s => s).ToList(),
+            GCDebug = state.GCDebug,
+
+            // feature group flags
+            OptimizeAnimator = state.OptimizeAnimator,
+            MergeSkinnedMesh = state.MergeSkinnedMesh,
+
+            // all feature flags
+            RemoveZeroSizedPolygon = state.RemoveZeroSizedPolygon,
+            OptimizeTexture = state.OptimizeTexture,
+            SweepComponents = state.SweepComponents,
+            ConfigureLeafMergeBone = state.ConfigureLeafMergeBone,
+            ConfigureMiddleMergeBone = state.ConfigureMiddleMergeBone,
+            ActivenessAnimation = state.ActivenessAnimation,
+            FreezingNonAnimatedBlendShape = state.FreezingNonAnimatedBlendShape,
+            FreezingMeaninglessBlendShape = state.FreezingMeaninglessBlendShape,
+            IsAnimatedOptimization = state.IsAnimatedOptimization,
+            MergePhysBoneCollider = state.MergePhysBoneCollider,
+            EntryExitToBlendTree = state.EntryExitToBlendTree,
+            RemoveUnusedAnimatingProperties = state.RemoveUnusedAnimatingProperties,
+            MergeBlendTreeLayer = state.MergeBlendTreeLayer,
+            RemoveMeaninglessAnimatorLayer = state.RemoveMeaninglessAnimatorLayer,
+            MergeStaticSkinnedMesh = state.MergeStaticSkinnedMesh,
+            MergeAnimatingSkinnedMesh = state.MergeAnimatingSkinnedMesh,
+            MergeMaterialAnimatingSkinnedMesh = state.MergeMaterialAnimatingSkinnedMesh,
+            MergeMaterials = state.MergeMaterials,
+            RemoveEmptySubMesh = state.RemoveEmptySubMesh,
+            AnyStateToEntryExit = state.AnyStateToEntryExit,
+            RemoveMaterialUnusedProperties = state.RemoveMaterialUnusedProperties,
+            RemoveMaterialUnusedTextures = state.RemoveMaterialUnusedTextures,
+            AutoMergeBlendShape = state.AutoMergeBlendShape,
+            RemoveUnusedSubMesh = state.RemoveUnusedSubMesh,
+            MergePhysBones = state.MergePhysBones,
+            CompleteGraphToEntryExit = state.CompleteGraphToEntryExit,
+            ReplaceEndBoneWithEndpointPosition = state.ReplaceEndBoneWithEndpointPosition,
+            OptimizationWarnings = state.OptimizationWarnings,
+            MirrorIgnoreOtherPhysBonesToIgnoreTransform = state.MirrorIgnoreOtherPhysBonesToIgnoreTransform,
+
+            PreserveBlendShapes = state.PreserveBlendShapes
+                .ToDictionary(
+                    kvp => GetPath(kvp.Key ? kvp.Key.gameObject : null),
+                    kvp => kvp.Value.OrderBy(s => s).ToList()
+                ),
+        };
+
+        ReportFile.AddFile("TraceAndOptimizeState.AtTheBeginning.json",
+            JsonConvert.SerializeObject(stateObj, Formatting.Indented));
     }
 }
 
