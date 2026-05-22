@@ -246,7 +246,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.SkinnedMeshes
             CopyVertexAttr(mesh, VertexAttribute.Color, vertexBuffers, DataParsers.ColorProvider,
                 setHasAttribute: _ =>
                 {
-                    HasColor = mesh.GetVertexAttributeFormat(VertexAttribute.Color) == VertexAttributeFormat.SNorm8
+                    HasColor = mesh.GetVertexAttributeFormat(VertexAttribute.Color) == VertexAttributeFormat.UNorm8
                         ? ColorStatus.UNorm8Color
                         : ColorStatus.FloatColor;
                 },
