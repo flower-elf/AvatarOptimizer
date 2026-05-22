@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog].
 
 ## [Unreleased]
 ### Added
+- Bug Report Helper now includes `TraceAndOptimizeState` in the `AtTheBeginning` phase as a pretty-printed JSON file [`#1737`](https://github.com/anatawa12/AvatarOptimizer/pull/1737)
+  - This allows inspecting the actual Trace and Optimize configuration after other tools may have modified it silently
 
 ### Changed
 
