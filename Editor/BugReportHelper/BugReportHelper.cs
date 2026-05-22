@@ -1210,38 +1210,45 @@ internal class Context
 
     public void AddTraceAndOptimizeStateReport(BuildContext context)
     {
-        var state = context.GetState<TraceAndOptimizeState>();
-        var avatarRoot = context.AvatarRootObject;
-
-        string GetGoPath(GameObject? go) =>
-            go == null ? "<null>" : Utils.RelativePath(avatarRoot.transform, go.transform) ?? go.name;
-
-        string GetSmrPath(SkinnedMeshRenderer smr) =>
-            smr == null ? "<null>" : Utils.RelativePath(avatarRoot.transform, smr.transform) ?? smr.gameObject.name;
-
-        var settings = new JsonSerializerSettings
+        try
         {
-            Formatting = Formatting.Indented,
-            ContractResolver = new ExcludeUnityObjectsContractResolver(),
-        };
+            var state = context.GetState<TraceAndOptimizeState>();
+            var avatarRoot = context.AvatarRootObject;
 
-        var sb = new StringBuilder();
-        sb.AppendLine(JsonConvert.SerializeObject(state, settings));
+            string GetGoPath(GameObject? go) =>
+                go == null ? "<null>" : Utils.RelativePath(avatarRoot.transform, go.transform) ?? go.name;
 
-        // Path-based section for fields excluded from JSON (Unity object references)
-        sb.AppendLine("Exclusions:");
-        foreach (var path in state.Exclusions.Select(GetGoPath).OrderBy(s => s))
-            sb.AppendLine($"  {path}");
+            string GetSmrPath(SkinnedMeshRenderer smr) =>
+                smr == null ? "<null>" : Utils.RelativePath(avatarRoot.transform, smr.transform) ?? smr.gameObject.name;
 
-        sb.AppendLine("PreserveBlendShapes:");
-        foreach (var kvp in state.PreserveBlendShapes.OrderBy(kvp => GetSmrPath(kvp.Key)))
-        {
-            sb.AppendLine($"  {GetSmrPath(kvp.Key)}:");
-            foreach (var shape in kvp.Value.OrderBy(s => s))
-                sb.AppendLine($"    {shape}");
+            var settings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                ContractResolver = new ExcludeUnityObjectsContractResolver(),
+            };
+
+            var sb = new StringBuilder();
+            sb.AppendLine(JsonConvert.SerializeObject(state, settings));
+
+            // Path-based section for fields excluded from JSON (Unity object references)
+            sb.AppendLine("Exclusions:");
+            foreach (var path in state.Exclusions.Select(GetGoPath).OrderBy(s => s))
+                sb.AppendLine($"  {path}");
+
+            sb.AppendLine("PreserveBlendShapes:");
+            foreach (var kvp in state.PreserveBlendShapes.OrderBy(kvp => GetSmrPath(kvp.Key)))
+            {
+                sb.AppendLine($"  {GetSmrPath(kvp.Key)}:");
+                foreach (var shape in kvp.Value.OrderBy(s => s))
+                    sb.AppendLine($"    {shape}");
+            }
+
+            ReportFile.AddFile("TraceAndOptimizeState.AtTheBeginning.json", sb.ToString());
         }
-
-        ReportFile.AddFile("TraceAndOptimizeState.AtTheBeginning.json", sb.ToString());
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+        }
     }
 
     private class ExcludeUnityObjectsContractResolver : DefaultContractResolver
