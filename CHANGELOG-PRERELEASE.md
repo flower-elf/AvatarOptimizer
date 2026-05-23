@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog].
 ### Removed
 
 ### Fixed
+- Avatar Optimizer incorrectly downconverts float32 color to unorm8 color `#1739`
+  - AAO now preserves float32 color as is
 
 ### Security
 
