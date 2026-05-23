@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog].
 ### Added
 - Bug Report Helper now includes `TraceAndOptimizeState` in the `AtTheBeginning` phase as a pretty-printed JSON file [`#1737`](https://github.com/anatawa12/AvatarOptimizer/pull/1737)
   - This allows inspecting the actual Trace and Optimize configuration after other tools may have modified it silently
+- PhysBone Global Colider Support added in VRCSDK 3.10.4 `#1740`
 
 ### Changed
 
