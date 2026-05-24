@@ -986,6 +986,72 @@ namespace Anatawa12.AvatarOptimizer.Test.E2E
             Assert.That(afterMerged.transform.IsChildOf(otherAnimator.transform), Is.True);
         }
 
+        [Test]
+        public void Issue1741_AutoMergeSkinnedMesh_MultipleAnimator_NoToggle()
+        {
+            // SMR0 is not animated, SMR1 is animated by root animator,
+            // SMR2 and SMR3 is animated by non-root animator
+            // SMR4 and SMR5 is animated by non-root animator
+            var avatar = TestUtils.NewAvatar();
+            avatar.AddComponent<TraceAndOptimize>();
+            var armature = Utils.NewGameObject("Armature", avatar.transform);
+            var root = Utils.NewGameObject("Root", armature.transform);
+            NewRenderer("SMR0", 1, avatar);
+            NewRenderer("SMR1", 1, avatar);
+            var otherAnimator0Object = Utils.NewGameObject("OtherAnimator0", avatar.transform);
+            var otherAnimator0 = otherAnimator0Object.AddComponent<Animator>();
+            var otherAnimator1Object = Utils.NewGameObject("OtherAnimator1", avatar.transform);
+            var otherAnimator1 = otherAnimator1Object.AddComponent<Animator>();
+            NewRenderer("SMR2", 1, otherAnimator0Object);
+            NewRenderer("SMR3", 1, otherAnimator0Object);
+            NewRenderer("SMR3", 1, otherAnimator1Object);
+            NewRenderer("SMR4", 1, otherAnimator1Object);
+
+            TestUtils.SetFxLayer(avatar, 
+            new AnimatorControllerBuilder("RootAnimator")
+                .AddLayer("Test", b => b
+                    .NewClipState("Test", c => c
+                        .AddPropertyBinding("SMR0", typeof(SkinnedMeshRenderer), "blendShape.test")))
+                .Build());
+
+            otherAnimator0.runtimeAnimatorController = new AnimatorControllerBuilder("OtherAnimator0")
+                .AddLayer("Test", b => b
+                    .NewClipState("Test", c => c
+                        .AddPropertyBinding("SMR2", typeof(SkinnedMeshRenderer), "blendShape.test")
+                        .AddPropertyBinding("SMR3", typeof(SkinnedMeshRenderer), "blendShape.test")))
+                .Build();
+
+            otherAnimator1.runtimeAnimatorController = new AnimatorControllerBuilder("OtherAnimator1")
+                .AddLayer("Test", b => b
+                    .NewClipState("Test", c => c
+                        .AddPropertyBinding("SMR4", typeof(SkinnedMeshRenderer), "blendShape.test")
+                        .AddPropertyBinding("SMR5", typeof(SkinnedMeshRenderer), "blendShape.test")))
+                .Build();
+
+            AvatarProcessor.ProcessAvatar(avatar);
+
+            var renderers = avatar.GetComponentsInChildren<SkinnedMeshRenderer>();
+            Assert.That(renderers, Has.Length.EqualTo(2));
+            var afterMerged0 = renderers[0];
+            var afterMerged1 = renderers[1];
+            Assert.That(afterMerged0.transform.IsChildOf(otherAnimator0.transform), Is.True);
+            Assert.That(afterMerged1.transform.IsChildOf(otherAnimator1.transform), Is.True);
+
+            GameObject NewRenderer(string name, int index, GameObject parent)
+            {
+                var smrObject = Utils.NewGameObject(name, parent.transform);
+                var smr = smrObject.AddComponent<SkinnedMeshRenderer>();
+                var smrMesh = TestUtils.NewCubeMeshWithBone();
+                smrMesh.AddBlendShapeFrame("test", 100, TestUtils.NewCubeBlendShapeFrame((index, Vector3.up)), null, null);
+                smr.sharedMesh = smrMesh;
+                smr.bones = new[] { root.transform };
+                smr.rootBone = root.transform;
+                smr.probeAnchor = root.transform;
+                smr.localBounds = new Bounds(Vector3.zero, Vector3.one);
+                return smrObject;
+            }
+        }
+
         #endregion
     }
 }
