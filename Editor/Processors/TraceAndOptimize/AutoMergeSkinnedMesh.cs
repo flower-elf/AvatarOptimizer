@@ -224,7 +224,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
                             .Select(x => x.transform) ?? Array.Empty<Transform>()))
                     .ToHashSet();
                 var innermost = changes.FirstOrDefault(c =>
-                                    changes.All(x => x == c || x.transform.IsChildOf(c.transform)))
+                                    changes.All(x => x == c || c.transform.IsChildOf(x.transform)))
                                 ?? context.AvatarRootTransform!;
 
                 if (!byAnimator.TryGetValue(innermost, out var list))
