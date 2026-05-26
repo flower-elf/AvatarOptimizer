@@ -33,11 +33,11 @@ hugo --minify --baseURL 'https://test.example.com'
 
 ### CHANGELOG Macros and Rules
 
-Any text looks like `#1234` are automatically converted to ``[`#1234`](https://github.com/anatawa12/AvatarOptimizer/pull/1234)`` on release.
+Any text that looks like `#1234` is automatically converted to ``[`#1234`](https://github.com/anatawa12/AvatarOptimizer/pull/1234)`` on release.
 Therefore, it's preferred to use this macro instead of generating link fully.
 
-All CHANGELOG entry should append to each section, not prepend in general.
-This is NOT strict rule so we might choose to prepent to show at the top of changelog.
+All CHANGELOG entries should be appended to each section, not prepended in general.
+This is NOT strict rule so we might choose to prepend to show at the top of changelog.
 
 Changelog entry should be linked to pull request, not issues, to know what was changed easily.
 Many small bugs doesn't have corresponding pull request so there is this rule.
