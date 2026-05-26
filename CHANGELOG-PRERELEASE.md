@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog].
 ### Removed
 
 ### Fixed
+- Fix for Auto Merge SMR and non-root Animator has implementation bug and not fixed for few cases `#1744`
 
 ### Security
 
