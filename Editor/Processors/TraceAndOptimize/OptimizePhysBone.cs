@@ -58,11 +58,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
 
         protected override void Execute(BuildContext context, TraceAndOptimizeState state)
         {
-            var collidersByTransform = new Dictionary<(
-                Transform rootTransformAnimated,
-                VRCPhysBoneColliderBase.ShapeType shapeType,
-                Transform? toggleRoot
-                ), List<VRCPhysBoneColliderBase>>();
+            var collidersByTransform = new Dictionary<ColliderBaseCharacteristics, List<VRCPhysBoneColliderBase>>();
 
             foreach (var collider in context.GetComponents<VRCPhysBoneColliderBase>())
             {
@@ -85,7 +81,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
                         && !context.GetAnimationComponent(toggleRoot.gameObject).IsAnimatedFloat(Props.IsActive))
                     toggleRoot = toggleRoot.parent;
 
-                var key = (transform, collider.shapeType, toggleRoot);
+                var key = new ColliderBaseCharacteristics(transform, toggleRoot, collider);
                 if (!collidersByTransform.TryGetValue(key, out var list))
                     collidersByTransform.Add(key, list = new List<VRCPhysBoneColliderBase>());
 
@@ -94,11 +90,11 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
 
             var mergedColliders = new Dictionary<VRCPhysBoneColliderBase, VRCPhysBoneColliderBase>();
 
-            foreach (var ((_, shapeType, _), colliders) in collidersByTransform)
+            foreach (var (characteristics, colliders) in collidersByTransform)
             {
                 if (colliders.Count <= 1) continue;
 
-                switch (shapeType)
+                switch (characteristics.shapeType)
                 {
                     case VRCPhysBoneColliderBase.ShapeType.Sphere:
                         MergeColliders(colliders, mergedColliders, collider =>
@@ -150,7 +146,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
                         break;
                     default:
                         BuildLog.LogWarning("TraceAndOptimize:Properties:UnknownPhysBoneColliderShape",
-                            shapeType.ToString(), colliders);
+                            characteristics.shapeType.ToString(), colliders);
                         break;
                 }
             }
@@ -179,6 +175,52 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
 
             foreach (var colliderBase in mergedColliders.Keys.ToList())
                 DestroyTracker.DestroyImmediate(colliderBase);
+        }
+
+        struct ColliderBaseCharacteristics : IEquatable<ColliderBaseCharacteristics>
+        {
+            public ColliderBaseCharacteristics(Transform rootTransformAnimated,
+                Transform? toggleRoot,
+                VRCPhysBoneColliderBase collider)
+            {
+                this.rootTransformAnimated = rootTransformAnimated;
+                this.toggleRoot = toggleRoot;
+                shapeType = collider.shapeType;
+#if AAO_VRCSDK3_AVATARS_PHYSBONE_GLOBAL_COLLIDER
+                globalCollisionFlags = collider.globalCollisionFlags;
+#endif
+            }
+
+            public Transform rootTransformAnimated;
+            public Transform? toggleRoot;
+            public VRCPhysBoneColliderBase.ShapeType shapeType;
+#if AAO_VRCSDK3_AVATARS_PHYSBONE_GLOBAL_COLLIDER
+            public DynamicsUsageFlags globalCollisionFlags;
+#endif
+
+            public bool Equals(ColliderBaseCharacteristics other) => 
+                rootTransformAnimated.Equals(other.rootTransformAnimated) 
+                && Equals(toggleRoot, other.toggleRoot) 
+                && shapeType == other.shapeType
+#if AAO_VRCSDK3_AVATARS_PHYSBONE_GLOBAL_COLLIDER
+                && globalCollisionFlags == other.globalCollisionFlags
+#endif
+
+                ;
+
+            public override bool Equals(object? obj) => obj is ColliderBaseCharacteristics other && Equals(other);
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(
+                    rootTransformAnimated, 
+                    toggleRoot, 
+                    (int)shapeType
+#if AAO_VRCSDK3_AVATARS_PHYSBONE_GLOBAL_COLLIDER
+                    , (int)globalCollisionFlags
+#endif
+                );
+            }
         }
 
         void MergeColliders<TKey>(IEnumerable<VRCPhysBoneColliderBase> colliders,
