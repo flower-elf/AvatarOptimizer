@@ -1052,8 +1052,9 @@ namespace Anatawa12.AvatarOptimizer.Test.E2E
             }
         }
 
-        // A bug while fixing the issue that we have mistake in logic selecting 'innermost' animator, actually we used to select outmost one.
-        // This test checks the bug does not exist for future versions.
+        // While fixing this issue, we introduced a bug in the logic for selecting the
+        // innermost animator: we mistakenly selected the outermost animator instead.
+        // This test verifies that the bug does not reappear in future versions.
         [Test]
         public void Issue1741_AutoMergeSkinnedMesh_SingleAnimator_AllRenderersAreBoth()
         {
