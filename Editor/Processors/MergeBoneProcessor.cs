@@ -78,6 +78,28 @@ namespace Anatawa12.AvatarOptimizer.Processors
                 Profiler.EndSample();
             }
 #endif
+
+            // To prevent z-fighting from being introduced by Avatar Optimizer, we normalize bindposes to nearset 
+            // known bindpose if there is.
+            // This may remove z-fighting previously occurs, but I hope that is unlikely and unexpected,
+            // so I accept removing z-fighting is acceptable.
+            // Please let us know when this logic introduced problem for you.
+            var primaryBindposes = new BoneInfoMap<Matrix4x4>();
+            foreach (var renderer in context.GetComponents<SkinnedMeshRenderer>())
+            {
+                using (ErrorReport.WithContextObject(renderer))
+                {
+                    Profiler.BeginSample("CollectPrimaryBindposes");
+                    foreach (var bone in context.GetMeshInfoFor(renderer).Bones)
+                    {
+                        // we assume fist bone we find is the most natural bone.
+                        if (bone.Transform != null && !mergeMapping.ContainsKey(bone.Transform) && ValidBindPose(bone.Bindpose))
+                            primaryBindposes.TryAdd(bone, bone.Bindpose);
+                    }
+                    Profiler.EndSample();
+                }
+            }
+
             foreach (var renderer in context.GetComponents<SkinnedMeshRenderer>())
             {
                 using (ErrorReport.WithContextObject(renderer))
@@ -85,7 +107,7 @@ namespace Anatawa12.AvatarOptimizer.Processors
                     Profiler.BeginSample("DoBoneMap");
                     var meshInfo2 = context.GetMeshInfoFor(renderer);
                     if (meshInfo2.Bones.Any(x => x.Transform != null && mergeMapping.ContainsKey(x.Transform)))
-                        DoBoneMap2(meshInfo2, mergeMapping, context);
+                        DoBoneMap2(meshInfo2, mergeMapping, context, primaryBindposes);
                     Profiler.EndSample();
                 }
             }
@@ -153,7 +175,8 @@ namespace Anatawa12.AvatarOptimizer.Processors
         }
 #endif
 
-        private void DoBoneMap2(MeshInfo2 meshInfo2, Dictionary<Transform, Transform> mergeMapping, BuildContext context)
+        private void DoBoneMap2(MeshInfo2 meshInfo2, Dictionary<Transform, Transform> mergeMapping,
+            BuildContext context, BoneInfoMap<Matrix4x4> primaryBindposes)
         {
             var primaryBones = new ConcurrentDictionary<Transform, Bone>();
             var boneReplaced = false;
@@ -178,6 +201,9 @@ namespace Anatawa12.AvatarOptimizer.Processors
                     if (ValidBindPose(bone.Bindpose))
                         primaryBones.TryAdd(bone.Transform, bone);
                 }
+                // Normalize to our known 'best' matrix
+                if (primaryBindposes.TryGetValue(bone, out var primaryBindpose))
+                    bone.Bindpose = primaryBindpose;
             }
 
             Profiler.EndSample();
@@ -234,6 +260,8 @@ namespace Anatawa12.AvatarOptimizer.Processors
 
                 var weightSum = vertex.BoneWeights.Select(x => x.weight).Sum();
                 // I want weightSum to be 1.0 but it may not.
+                // However, due to float precision problem the weight become non-1 so make them 1 
+                if (Mathf.Approximately(weightSum, 1)) weightSum = 1;
                 vertex.BoneWeights.Clear();
                 vertex.BoneWeights.Add((finalBone, weightSum));
             });
