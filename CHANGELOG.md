@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog].
 ### Removed
 
 ### Fixed
+- Merge Bone may introduce z-fighting `#1748`
+  - This fixes compatibility problem with see through hair
 
 ### Security
 
