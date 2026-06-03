@@ -79,11 +79,11 @@ namespace Anatawa12.AvatarOptimizer.Processors
             }
 #endif
 
-            // To prevent z-fighting from being introduced by Avatar Optimizer, we normalize bindposes to nearset 
+            // To prevent z-fighting from being introduced by Avatar Optimizer, we normalize bindposes to nearest
             // known bindpose if there is.
-            // This may remove z-fighting previously occurs, but I hope that is unlikely and unexpected,
+            // This may remove z-fighting that previously occurred, but I hope that is unlikely and unexpected,
             // so I accept removing z-fighting is acceptable.
-            // Please let us know when this logic introduced problem for you.
+            // Please let us know if this logic introduces problems for you.
             var primaryBindposes = new BoneInfoMap<Matrix4x4>();
             foreach (var renderer in context.GetComponents<SkinnedMeshRenderer>())
             {
@@ -92,7 +92,7 @@ namespace Anatawa12.AvatarOptimizer.Processors
                     Profiler.BeginSample("CollectPrimaryBindposes");
                     foreach (var bone in context.GetMeshInfoFor(renderer).Bones)
                     {
-                        // we assume fist bone we find is the most natural bone.
+                        // we assume the first bone we find is the most natural bone.
                         if (bone.Transform != null && !mergeMapping.ContainsKey(bone.Transform) && ValidBindPose(bone.Bindpose))
                             primaryBindposes.TryAdd(bone, bone.Bindpose);
                     }
@@ -260,7 +260,7 @@ namespace Anatawa12.AvatarOptimizer.Processors
 
                 var weightSum = vertex.BoneWeights.Select(x => x.weight).Sum();
                 // I want weightSum to be 1.0 but it may not.
-                // However, due to float precision problem the weight become non-1 so make them 1 
+                // However, due to float precision, the sum can be close to 1 without being exactly 1, so snap it to 1.
                 if (Mathf.Approximately(weightSum, 1)) weightSum = 1;
                 vertex.BoneWeights.Clear();
                 vertex.BoneWeights.Add((finalBone, weightSum));
@@ -358,7 +358,7 @@ namespace Anatawa12.AvatarOptimizer.Processors
 
             private (List<Entry>? list, int index) FindEntry(Transform? transform, Matrix4x4 mat)
             {
-                if (!ValidBone(transform, mat)) return default;
+                if (!ValidBone(transform, mat)) return (null, -1);
                 if (!_byBoneTransform.TryGetValue(transform, out var list)) return (null, -1);
 
                 var minIndex = -1;
