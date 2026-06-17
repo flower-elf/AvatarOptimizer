@@ -539,6 +539,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
             newRenderer.transform.localPosition = Vector3.zero;
             newRenderer.transform.localRotation = Quaternion.identity;
             newRenderer.transform.localScale = Vector3.one;
+            newRenderer.layer = key.Layer;
 
             var newSkinnedMeshRenderer = newRenderer.AddComponent<SkinnedMeshRenderer>();
             newSkinnedMeshRenderer.localBounds = key.Bounds;
@@ -852,6 +853,9 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
             public bool UpdateWhenOffscreen;
             public Transform RootBone;
             public bool SkinnedMotionVectors;
+            
+            // gameobject property
+            public int Layer;
 
             public CategorizationKey(
                 MeshInfo2 meshInfo2,
@@ -878,6 +882,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
                 AllowOcclusionWhenDynamic = renderer.allowOcclusionWhenDynamic;
                 LightProbeProxyVolumeOverride = renderer.lightProbeProxyVolumeOverride;
                 ProbeAnchor = renderer.probeAnchor;
+                Layer = renderer.gameObject.layer;
 
                 Quality = renderer.quality;
                 UpdateWhenOffscreen = renderer.updateWhenOffscreen;
@@ -903,7 +908,8 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
                        Quality == other.Quality &&
                        UpdateWhenOffscreen == other.UpdateWhenOffscreen &&
                        Equals(RootBone, other.RootBone) &&
-                       SkinnedMotionVectors == other.SkinnedMotionVectors;
+                       SkinnedMotionVectors == other.SkinnedMotionVectors &&
+                       Layer == other.Layer;
             }
 
             public override bool Equals(object? obj)
@@ -931,6 +937,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
                 hashCode.Add(UpdateWhenOffscreen);
                 hashCode.Add(RootBone);
                 hashCode.Add(SkinnedMotionVectors);
+                hashCode.Add(Layer);
                 return hashCode.ToHashCode();
             }
         }
