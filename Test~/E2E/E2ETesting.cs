@@ -1115,6 +1115,7 @@ namespace Anatawa12.AvatarOptimizer.Test.E2E
             const int nonDefaultLayer = 9;
 
             var avatar = TestUtils.NewAvatar();
+            TestUtils.SetFxLayer(avatar, new AnimatorController());
             avatar.AddComponent<TraceAndOptimize>();
             var armature = Utils.NewGameObject("Armature", avatar.transform);
             var root = Utils.NewGameObject("Root", armature.transform);
