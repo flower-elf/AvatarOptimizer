@@ -485,6 +485,9 @@ msgstr "合并蒙皮网格渲染器"
 msgid "TraceAndOptimize:prop:allowShuffleMaterialSlots"
 msgstr "允许改变材质插槽的前后关系"
 
+msgid "TraceAndOptimize:prop:preserveRendererLayer"
+msgstr "保留图层信息"
+
 msgid "TraceAndOptimize:tooltip:allowShuffleMaterialSlots"
 msgstr "允许通过改变材质插槽的前后关系来减少绘制调用。这可能会影响绘制顺序。"
 

@@ -125,6 +125,8 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
             out Dictionary<CategorizationKey, List<MeshInfo2>> categorizedMeshes)
         {
             List<MeshInfo2> orphanMeshes;
+            var state = context.GetState<TraceAndOptimizeState>();
+
             // then, group by mesh attributes
             categorizedMeshes = new Dictionary<CategorizationKey, List<MeshInfo2>>();
             foreach (var meshInfo2 in mergeMeshes)
@@ -141,8 +143,12 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
 
                 var vrmFirstPersonFlag = GetVrmFirstPersonFlag(context, meshInfo2.SourceRenderer);
 
+                var layer = 0;
+                if (state.PreserveRendererLayer)
+                    layer = meshInfo2.SourceRenderer.gameObject.layer;
+
                 var key = new CategorizationKey(meshInfo2, activeness, activenessAnimationLocations,
-                    rendererAnimationLocations, vrmFirstPersonFlag);
+                    rendererAnimationLocations, vrmFirstPersonFlag, layer);
                 if (!categorizedMeshes.TryGetValue(key, out var list))
                 {
                     list = new List<MeshInfo2>();
@@ -863,7 +869,8 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
                 EqualsHashSet<(bool initial, EqualsHashSet<AnimationLocation> animation)> activenessAnimationLocations,
                 EqualsHashSet<(string property, float? defaultValue, EqualsHashSet<AnimationLocation> locations)>
                     rendererAnimationLocations,
-                VrmFirstPersonFlag vrmFirstPersonFlag
+                VrmFirstPersonFlag vrmFirstPersonFlag,
+                int layer
             )
             {
                 var renderer = (SkinnedMeshRenderer)meshInfo2.SourceRenderer;
@@ -882,7 +889,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
                 AllowOcclusionWhenDynamic = renderer.allowOcclusionWhenDynamic;
                 LightProbeProxyVolumeOverride = renderer.lightProbeProxyVolumeOverride;
                 ProbeAnchor = renderer.probeAnchor;
-                Layer = renderer.gameObject.layer;
+                Layer = layer;
 
                 Quality = renderer.quality;
                 UpdateWhenOffscreen = renderer.updateWhenOffscreen;

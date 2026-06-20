@@ -18,6 +18,7 @@ namespace Anatawa12.AvatarOptimizer
         private SerializedProperty _optimizeAnimator = null!; // Initialized in OnEnable
         private SerializedProperty _mergeSkinnedMesh = null!; // Initialized in OnEnable
         private SerializedProperty _allowShuffleMaterialSlots = null!; // Initialized in OnEnable
+        private SerializedProperty _preserveRendererLayer = null!; // Initialized in OnEnable
         private SerializedProperty _optimizeTexture = null!; // Initialized in OnEnable
         private SerializedProperty _mmdWorldCompatibility = null!; // Initialized in OnEnable
         private SerializedProperty _debugOptions = null!; // Initialized in OnEnable
@@ -36,6 +37,7 @@ namespace Anatawa12.AvatarOptimizer
             _optimizeAnimator = serializedObject.FindProperty(nameof(TraceAndOptimize.optimizeAnimator));
             _mergeSkinnedMesh = serializedObject.FindProperty(nameof(TraceAndOptimize.mergeSkinnedMesh));
             _allowShuffleMaterialSlots = serializedObject.FindProperty(nameof(TraceAndOptimize.allowShuffleMaterialSlots));
+            _preserveRendererLayer = serializedObject.FindProperty(nameof(TraceAndOptimize.preserveRendererLayer));
             _optimizeTexture = serializedObject.FindProperty(nameof(TraceAndOptimize.optimizeTexture));
             _mmdWorldCompatibility = serializedObject.FindProperty(nameof(TraceAndOptimize.mmdWorldCompatibility));
             _debugOptions = serializedObject.FindProperty(nameof(TraceAndOptimize.debugOptions));
@@ -96,6 +98,7 @@ namespace Anatawa12.AvatarOptimizer
                 {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.PropertyField(_allowShuffleMaterialSlots);
+                    EditorGUILayout.PropertyField(_preserveRendererLayer);
                     EditorGUI.indentLevel--;
                 }
 

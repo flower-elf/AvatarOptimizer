@@ -79,6 +79,12 @@ namespace Anatawa12.AvatarOptimizer
         internal bool allowShuffleMaterialSlots = true;
 
         [NotKeyable]
+        [AAOLocalized("TraceAndOptimize:prop:preserveRendererLayer")]
+        [ToggleLeft]
+        [SerializeField]
+        internal bool preserveRendererLayer = true;
+
+        [NotKeyable]
         [AAOLocalized("TraceAndOptimize:prop:optimizeTexture")]
         [ToggleLeft]
         [SerializeField]

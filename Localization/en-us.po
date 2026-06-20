@@ -955,6 +955,9 @@ msgstr "Optimize Texture"
 msgid "TraceAndOptimize:prop:allowShuffleMaterialSlots"
 msgstr "Allow Shuffling Material Slots"
 
+msgid "TraceAndOptimize:prop:preserveRendererLayer"
+msgstr "Preserve Layer Information"
+
 msgid "TraceAndOptimize:tooltip:allowShuffleMaterialSlots"
 msgstr "Allow shuffling material slots to reduce draw calls. This may affect the rendering order."
 

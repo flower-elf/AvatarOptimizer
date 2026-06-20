@@ -522,6 +522,9 @@ msgstr "合併 Skinned Mesh"
 msgid "TraceAndOptimize:prop:allowShuffleMaterialSlots"
 msgstr "允許重排材質槽"
 
+msgid "TraceAndOptimize:prop:preserveRendererLayer"
+msgstr "保留圖層資訊"
+
 msgid "TraceAndOptimize:tooltip:allowShuffleMaterialSlots"
 msgstr "允許重新排列材質槽以減少繪製呼叫。\n這可能會影響渲染順序。"
 

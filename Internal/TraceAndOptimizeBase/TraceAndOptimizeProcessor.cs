@@ -12,6 +12,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
     {
         // optimization options
         public bool AllowShuffleMaterialSlots;
+        public bool PreserveRendererLayer;
         public bool MmdWorldCompatibility = true;
         public bool PreserveEndBone;
 
@@ -63,6 +64,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
         {
             // optimization settings
             AllowShuffleMaterialSlots = config.allowShuffleMaterialSlots;
+            PreserveRendererLayer = config.preserveRendererLayer;
             MmdWorldCompatibility = config.mmdWorldCompatibility;
             PreserveEndBone = config.preserveEndBone;
 
