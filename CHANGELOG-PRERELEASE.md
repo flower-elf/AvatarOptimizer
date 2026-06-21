@@ -16,7 +16,9 @@ The format is based on [Keep a Changelog].
 ### Removed
 
 ### Fixed
-
+- AutoMergeSkinnedMesh now chooses the generated renderer GameObject layer from the most common source renderer layer [`#1749`](https://github.com/anatawa12/AvatarOptimizer/pull/1749)
+  - This prevents layer-based cameras, lights, and shader gimmicks work correctly in Play mode after optimization.
+  
 ### Security
 
 ## [1.9.15-beta.1] - 2026-06-03

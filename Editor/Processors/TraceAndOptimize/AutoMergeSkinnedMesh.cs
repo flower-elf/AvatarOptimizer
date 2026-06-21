@@ -277,6 +277,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
             // if there's no activeness animation, we merge them at animator root
             var newSkinnedMeshRenderer = CreateNewRenderer(gameObjectFactory, animatorRoot, key);
             newSkinnedMeshRenderer.gameObject.SetActive(key.Activeness == Activeness.AlwaysActive);
+            newSkinnedMeshRenderer.gameObject.layer = GetMostCommonLayer(meshInfos);
             var newMeshInfo = context.GetMeshInfoFor(newSkinnedMeshRenderer);
             var meshInfosArray = meshInfos.ToArray();
 
@@ -318,7 +319,7 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
                 commonParent, keepPropertyCount: 2);
 
             var newSkinnedMeshRenderer = CreateNewRenderer(gameObjectFactory, commonParent, key);
-
+            newSkinnedMeshRenderer.gameObject.layer = GetMostCommonLayer(meshInfos);
             // process rest activeness animation
             if (activenessAnimatingProperties.Count > 0)
             {
@@ -526,6 +527,24 @@ namespace Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes
         {
             // note: unset will fallback to Auto
             return context.GetMappingBuilder().GetVrmFirstPersonFlag(component) ?? VrmFirstPersonFlag.Auto;
+        }
+        private static int GetMostCommonLayer(List<MeshInfo2> meshInfos)
+        {
+            var layerCounts = new Dictionary<int, int>();
+
+            foreach (var meshInfo in meshInfos)
+            {
+                var layer = meshInfo.SourceRenderer.gameObject.layer;
+                layerCounts.TryGetValue(layer, out var count);
+                layerCounts[layer] = count + 1;
+            }
+
+            // note: If multiple layers have the same count, use the lowest layer number.
+            return layerCounts
+                .OrderByDescending(x => x.Value)
+                .ThenBy(x => x.Key)
+                .First()
+                .Key;
         }
 
         private static SkinnedMeshRenderer CreateNewRenderer(

@@ -1108,6 +1108,42 @@ namespace Anatawa12.AvatarOptimizer.Test.E2E
             }
         }
 
+        [Test]
+        public void PR1749_AutoMergeSkinnedMesh_PreserveLayer()
+        {
+            // preserve layer when auto merging skinned meshes
+            const int nonDefaultLayer = 9;
+
+            var avatar = TestUtils.NewAvatar();
+            TestUtils.SetFxLayer(avatar, new AnimatorController());
+            avatar.AddComponent<TraceAndOptimize>();
+            var armature = Utils.NewGameObject("Armature", avatar.transform);
+            var root = Utils.NewGameObject("Root", armature.transform);
+
+            NewRenderer("Renderer0");
+            NewRenderer("Renderer1");
+
+            AvatarProcessor.ProcessAvatar(avatar);
+
+            var renderers = avatar.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            Assert.That(renderers, Has.Length.EqualTo(1));
+            Assert.That(renderers[0].gameObject.layer, Is.EqualTo(nonDefaultLayer));
+
+            void NewRenderer(string name)
+            {
+                var smrObject = Utils.NewGameObject(name, avatar.transform);
+                smrObject.layer = nonDefaultLayer;
+
+                var smr = smrObject.AddComponent<SkinnedMeshRenderer>();
+                var smrMesh = TestUtils.NewCubeMeshWithBone();
+                smr.sharedMesh = smrMesh;
+                smr.bones = new[] { root.transform };
+                smr.rootBone = root.transform;
+                smr.probeAnchor = root.transform;
+                smr.localBounds = new Bounds(Vector3.zero, Vector3.one);
+            }
+        }
+
         #endregion
     }
 }
