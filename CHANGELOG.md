@@ -16,12 +16,15 @@ The format is based on [Keep a Changelog].
 ### Removed
 
 ### Fixed
-- AutoMergeSkinnedMesh now chooses the generated renderer GameObject layer from the most common source renderer layer [`#1749`](https://github.com/anatawa12/AvatarOptimizer/pull/1749)
-  - This prevents layer-based cameras, lights, and shader gimmicks work correctly in Play mode after optimization.
-- Merge Bone may introduce z-fighting `#1748`
-  - This fixes compatibility problem with see through hair
 
 ### Security
+
+## [1.9.15] - 2026-06-24
+### Fixed
+- AutoMergeSkinnedMesh now chooses the generated renderer GameObject layer from the most common source renderer layer [`#1749`](https://github.com/anatawa12/AvatarOptimizer/pull/1749)
+  - This prevents layer-based cameras, lights, and shader gimmicks work correctly in Play mode after optimization.
+- Merge Bone may introduce z-fighting [`#1748`](https://github.com/anatawa12/AvatarOptimizer/pull/1748)
+  - This fixes compatibility problem with see through hair
 
 ## [1.9.14] - 2026-05-26
 ### Added
@@ -1492,7 +1495,8 @@ The format is based on [Keep a Changelog].
 - Merge Bone
 - Clear Endpoint Position
 
-[Unreleased]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.14...HEAD
+[Unreleased]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.15...HEAD
+[1.9.15]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.14...v1.9.15
 [1.9.14]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.13...v1.9.14
 [1.9.13]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.12...v1.9.13
 [1.9.12]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.11...v1.9.12

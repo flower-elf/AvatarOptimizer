@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog].
 
 ### Security
 
+## [1.9.15] - 2026-06-24
 ## [1.9.15-beta.2] - 2026-06-21
 ### Fixed
 - AutoMergeSkinnedMesh now chooses the generated renderer GameObject layer from the most common source renderer layer [`#1749`](https://github.com/anatawa12/AvatarOptimizer/pull/1749)
@@ -2296,7 +2297,8 @@ This release is mistake.
 - Merge Bone
 - Clear Endpoint Position
 
-[Unreleased]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.15-beta.2...HEAD
+[Unreleased]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.15...HEAD
+[1.9.15]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.15-beta.2...v1.9.15
 [1.9.15-beta.2]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.15-beta.1...v1.9.15-beta.2
 [1.9.15-beta.1]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.14...v1.9.15-beta.1
 [1.9.14]: https://github.com/anatawa12/AvatarOptimizer/compare/v1.9.14-beta.2...v1.9.14
