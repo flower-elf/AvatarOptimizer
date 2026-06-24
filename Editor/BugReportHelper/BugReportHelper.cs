@@ -182,12 +182,22 @@ internal class BugReportHelper : EditorWindow
         EditorGUI.EndDisabledGroup();
     }
 
+    private enum Progress
+    {
+        CollectingEnvInfo,
+        BuildingAvatar,
+        Finalizing,
+        Count,
+    }
+
     public static ReportFile RunBuild(GameObject avatar, TracingArea tracing)
     {
         var clonedAvatar = Instantiate(avatar);
         var tracingConfig = Tracing.Enabled;
         try
         {
+            EditorUtility.DisplayProgressBar("Bug Report Helper", "Collecting environment information",
+                (float)Progress.CollectingEnvInfo / (float)(Progress.Count - 1));
             Tracing.Enabled = tracing;
             var reportFile = new ReportFile();
 
@@ -227,6 +237,8 @@ internal class BugReportHelper : EditorWindow
                 Debug.unityLogger.logEnabled = true;
                 Debug.unityLogger.filterLogType = LogType.Log;
                 Context.Current = new Context(reportFile);
+                EditorUtility.DisplayProgressBar("Bug Report Helper", "Building Avatar",
+                    (float)Progress.BuildingAvatar / (float)(Progress.Count - 1));
                 AvatarProcessor.ProcessAvatar(clonedAvatar);
             }
             finally
@@ -236,6 +248,9 @@ internal class BugReportHelper : EditorWindow
                 Debug.unityLogger.filterLogType = preLogType;
                 Context.Current = null;
             }
+
+            EditorUtility.DisplayProgressBar("Bug Report Helper", "Finalizing Report",
+                (float)Progress.Finalizing / (float)(Progress.Count - 1));
 
             reportFile.AddFile("BuildLog.log.txt", bugReporterLogHandler.GetLog());
 
@@ -257,6 +272,7 @@ internal class BugReportHelper : EditorWindow
         {
             Tracing.Enabled = tracingConfig;
             DestroyImmediate(clonedAvatar);
+            EditorUtility.ClearProgressBar();
         }
     }
 
