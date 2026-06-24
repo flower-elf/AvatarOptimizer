@@ -726,7 +726,7 @@ internal class BugReportHelper : EditorWindow
                     builder.AppendLine($"      bounds: {mesh.Bounds}");
                     builder.AppendLine($"      blendShapeCount: {mesh.BlendShapes.Count}");
                     foreach (var meshBlendShape in mesh.BlendShapes)
-                        builder.AppendLine($"        blendShape[]: {meshBlendShape.name} (frames: {meshBlendShape.weight})");
+                        builder.AppendLine($"        blendShape[]: {meshBlendShape.name} (weight: {meshBlendShape.weight})");
                     builder.AppendLine($"      subMeshCount: {mesh.SubMeshes.Count}");
                     for (var i = 0; i < mesh.SubMeshes.Count; i++)
                     {
