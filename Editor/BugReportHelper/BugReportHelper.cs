@@ -714,17 +714,18 @@ internal class BugReportHelper : EditorWindow
                     builder.AppendLine($"    reflectionProbeUsage: {renderer.reflectionProbeUsage}");
                     builder.AppendLine($"    sortingLayerID: {renderer.sortingLayerID}");
                     builder.AppendLine($"    sortingOrder: {renderer.sortingOrder}");
+                    builder.AppendLine($"    sharedMaterials:");
                     for (var i = 0; i < renderer.sharedMaterials.Length; i++)
                     {
                         var sharedMaterial = renderer.sharedMaterials[i];
                         if (sharedMaterial != null)
                         {
-                            builder.AppendLine($"    sharedMaterials[{i}]: {sharedMaterial.name} ({sharedMaterial.shader.name}) ({sharedMaterial.GetInstanceID()})");
-                            MaterialInfo(sharedMaterial, "      ");
+                            builder.AppendLine($"      sharedMaterials[{i}]: {sharedMaterial.name} ({sharedMaterial.shader.name}) ({sharedMaterial.GetInstanceID()})");
+                            MaterialInfo(sharedMaterial, "        ");
                         }
                         else
                         {
-                            builder.AppendLine($"    sharedMaterials[{i}]: <Missing / None>");
+                            builder.AppendLine($"      sharedMaterials[{i}]: <Missing / None>");
                         }
                     }
                 }
@@ -758,11 +759,24 @@ internal class BugReportHelper : EditorWindow
                                 break;
                             case UnityEngine.Rendering.ShaderPropertyType.Texture:
                                 var texture = material.GetTexture(propertyName);
-                                builder.AppendLine(
-                                    $"{indent}property[{i}]: {propertyName} (Texture) = {(texture != null ? texture.name : "<Missing>")}");
+                                builder.AppendLine($"{indent}property[{i}]: {propertyName} (Texture) = {TextureInfo(texture)}");
                                 break;
                         }
                     }
+                }
+
+                string TextureInfo(Texture texture)
+                {
+                    if (texture == null) return "<NoneOrMissing>";
+                    var builder = new StringBuilder();
+                    builder.Append("name: '").Append(texture.name).Append("', ");
+                    builder.Append("format: ").Append(texture.graphicsFormat).Append(", ");
+                    builder.Append("dimension: ").Append(texture.dimension).Append(", ");
+                    builder.Append("width: ").Append(texture.width).Append(", ");
+                    builder.Append("height: ").Append(texture.height).Append(", ");
+                    if (texture is Texture3D texture3D)
+                        builder.Append("depth: ").Append(texture3D.depth).Append(", ");
+                    return builder.ToString();
                 }
 
                 void Constraint<T>(T constraint) where T : Behaviour, UnityEngine.Animations.IConstraint
