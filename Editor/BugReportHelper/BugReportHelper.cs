@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Anatawa12.AvatarOptimizer.AnimatorParsersV2;
 using Anatawa12.AvatarOptimizer.Processors;
+using Anatawa12.AvatarOptimizer.Processors.SkinnedMeshes;
 using Anatawa12.AvatarOptimizer.Processors.TraceAndOptimizes;
 using nadena.dev.ndmf;
 using nadena.dev.ndmf.platform;
@@ -416,8 +417,9 @@ internal class BugReportHelper : EditorWindow
     }
 #endif
 
-    public static string CollectAvatarInfo(GameObject clonedAvatar)
+    public static string CollectAvatarInfo(GameObject clonedAvatar, Func<Renderer, MeshInfo2?>? tryGetMeshInfoFor = null)
     {
+        tryGetMeshInfoFor ??= _ => null;
         // Avatr Info file consists is something like:
         // Path/Of/GameObject:
         //   ComponentType1
@@ -477,17 +479,19 @@ internal class BugReportHelper : EditorWindow
                         break;
                     case SkinnedMeshRenderer skinnedMeshRenderer:
                         MeshInfo(skinnedMeshRenderer.sharedMesh);
+                        builder.AppendLine($"    bones: {skinnedMeshRenderer.bones.Length}");
                         for (var i = 0; i < skinnedMeshRenderer.bones.Length; i++)
                         {
                             var bone = skinnedMeshRenderer.bones[i];
-                            builder.AppendLine($"    bone[{i}]: {bone}");
+                            builder.AppendLine($"      bone[{i}]: {bone}");
                         }
                         // blendshape weights
+                        builder.AppendLine($"    blendShapeWeight:{skinnedMeshRenderer.sharedMesh?.blendShapeCount ?? 0}");
                         for (var i = 0; i < skinnedMeshRenderer.sharedMesh?.blendShapeCount; i++)
                         {
                             var weight = skinnedMeshRenderer.GetBlendShapeWeight(i);
                             var blendShapeName = skinnedMeshRenderer.sharedMesh.GetBlendShapeName(i);
-                            builder.AppendLine($"    blendShapeWeight[{i}]: {blendShapeName} = {weight}");
+                            builder.AppendLine($"      blendShapeWeight[{i}]: {blendShapeName} = {weight}");
                         }
                         // root bone
                         builder.AppendLine($"    rootBone: {skinnedMeshRenderer.rootBone}");
@@ -691,7 +695,7 @@ internal class BugReportHelper : EditorWindow
                     {
                         var blendShapeName = mesh.GetBlendShapeName(i);
                         var frameCount = mesh.GetBlendShapeFrameCount(i);
-                        builder.AppendLine($"      blendShape[{i}]: {blendShapeName} (frames: {frameCount})");
+                        builder.AppendLine($"        blendShape[{i}]: {blendShapeName} (frames: {frameCount})");
                     }
                     // submeshes
                     var subMeshCount = mesh.subMeshCount;
@@ -703,6 +707,45 @@ internal class BugReportHelper : EditorWindow
                     }
                     // bone weights
                     builder.AppendLine($"      boneWeights: total={mesh.GetAllBoneWeights().Length}, bonesPerVertex={mesh.GetBonesPerVertex().Length}");
+                }
+
+                void MeshInfo2(MeshInfo2 mesh)
+                {
+                    if (mesh == null)
+                    {
+                        builder.AppendLine("  Mesh: <Missing or None>");
+                        return;
+                    }
+
+                    builder.AppendLine($"    MeshInfo2:");
+                    builder.AppendLine($"      vertexCount: {mesh.Vertices.Count}");
+                    builder.AppendLine($"      bindposes: {mesh.Bones.Count}");
+                    builder.AppendLine($"      hasTangent: {mesh.HasTangent}");
+                    builder.AppendLine($"      hasNormals: {mesh.HasNormals}");
+                    builder.AppendLine($"      hasColor: {mesh.HasColor}");
+                    builder.AppendLine($"      bounds: {mesh.Bounds}");
+                    builder.AppendLine($"      blendShapeCount: {mesh.BlendShapes.Count}");
+                    foreach (var meshBlendShape in mesh.BlendShapes)
+                        builder.AppendLine($"        blendShape[]: {meshBlendShape.name} (frames: {meshBlendShape.weight})");
+                    builder.AppendLine($"      subMeshCount: {mesh.SubMeshes.Count}");
+                    for (var i = 0; i < mesh.SubMeshes.Count; i++)
+                    {
+                        var subMesh = mesh.SubMeshes[i];
+                        builder.AppendLine($"        subMesh[{i}]: topology={subMesh.Topology}, indexCount={subMesh.Vertices.Count}");
+                        for (var j = 0; j < subMesh.SharedMaterials.Length; j++)
+                        {
+                            var sharedMaterial = subMesh.SharedMaterials[j];
+                            if (sharedMaterial != null)
+                            {
+                                builder.AppendLine($"          sharedMaterials[{j}]: {sharedMaterial.name} ({sharedMaterial.shader.name}) ({sharedMaterial.GetInstanceID()})");
+                                MaterialInfo(sharedMaterial, "            ");
+                            }
+                            else
+                            {
+                                builder.AppendLine($"          sharedMaterials[{j}]: <Missing / None>");
+                            }
+                        }
+                    }
                 }
 
                 void Renderer(Renderer renderer)
@@ -727,6 +770,11 @@ internal class BugReportHelper : EditorWindow
                         {
                             builder.AppendLine($"      sharedMaterials[{i}]: <Missing / None>");
                         }
+                    }
+
+                    if (tryGetMeshInfoFor(renderer) is {} meshInfo2)
+                    {
+                        MeshInfo2(meshInfo2);
                     }
                 }
 
@@ -1174,6 +1222,7 @@ internal class BugReportHelper : EditorWindow
             public void AppendFormatted(Quaternion t) => _builder._sb.Append(t.ToString(FloatFormat));
             public void AppendFormatted(Color t) => _builder._sb.Append(t.ToString(FloatFormat));
             public void AppendFormatted(Color32 t) => _builder._sb.Append(t);
+            public void AppendFormatted(Bounds t) => _builder._sb.Append(t.ToString(FloatFormat));
             public void AppendFormatted(Component t) => _builder._sb.Append(ComponentPath(t));
             public void AppendFormatted(GameObject t) => _builder._sb.Append(ComponentPath(t.transform));
             public void AppendFormatted(UnityEngine.Rendering.VertexAttributeDescriptor t) => _builder._sb.Append(t.ToString());
@@ -1214,10 +1263,11 @@ internal class Context
         ReportFile.AddFile("RawAnimations.tree.txt", BugReportHelper.RawAnimationInfo(context.AvatarRootObject));
     }
 
-    public void AddGcDebugInfo(InternalGcDebugPosition position, string collectDataToString, GameObject root, IEnumerable<MaterialInformation> materials)
+    public void AddGcDebugInfo(InternalGcDebugPosition position, string collectDataToString, GameObject root,
+        Func<Renderer, MeshInfo2?> tryGetMeshInfoFor, IEnumerable<MaterialInformation> materials)
     {
         ReportFile.AddFile($"GCDebug.{position}.tree.txt", collectDataToString);
-        ReportFile.AddFile($"AvatarInfo.{position}.tree.txt", BugReportHelper.CollectAvatarInfo(root));
+        ReportFile.AddFile($"AvatarInfo.{position}.tree.txt", BugReportHelper.CollectAvatarInfo(root, tryGetMeshInfoFor));
         ReportFile.AddFile($"MaterialInformation.{position}.tree.txt", 
             BugReportHelper.MaterialInformation(root.transform, materials));
     }

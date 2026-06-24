@@ -44,6 +44,7 @@ namespace Anatawa12.AvatarOptimizer.Processors
                 {
                     var gcDebugRoot = AddGCDebugInfo(context, place);
                     reportCtx.AddGcDebugInfo(_position, gcDebugRoot.CollectDataToString(), context.AvatarRootObject,
+                        context.TryGetMeshInfoFor,
                         context.GetState<MaterialInformationState>().MaterialInformationByMaterial.Values);
                 }
                 finally
