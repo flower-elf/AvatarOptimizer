@@ -208,7 +208,7 @@ msgid "ObjectMapping:DummyAnimationObject:1"
 msgstr "对象不存在导致 AAO 删除了对应键值。(此消息仅在播放模式下显示)"
 
 msgid "ObjectMapping:DummyAnimationObject:2"
-msgstr "AAO 可能将对象视为"未使用"状态从而删除了目标对象。"
+msgstr "AAO 可能将对象视为“未使用”状态从而删除了目标对象。"
 
 msgid "ObjectMapping:DummyAnimationObject:3"
 msgstr "如果这破坏了你的动画，请向 AAO 报告错误。"
@@ -433,7 +433,7 @@ msgid "MergeSkinnedMesh:prop:skipEnablementMismatchedRenderers"
 msgstr "不合并与合并目标状态不同的 Renderer"
 
 msgid "MergeSkinnedMesh:prop:copyEnablementAnimation"
-msgstr “复制启用/禁用状态的动画”
+msgstr "复制启用 / 禁用状态的动画"
 
 msgid "MergeSkinnedMesh:label:Merge Materials"
 msgstr "合并材质"
@@ -492,21 +492,21 @@ msgid "MergeSkinnedMesh:copy-enablement-animation:error:enablement-of-merged-mes
 msgstr "合并目标 SkinnedMeshRenderer 的启用/禁用状态正在被动画控制。"
 
 msgid "MergeSkinnedMesh:copy-enablement-animation:error:enablement-of-merged-mesh-is-animated:description"
-msgstr "当 “复制启用/禁用状态的动画” 启用时，Merge Skinned Mesh 将创建控制合并目标 SkinnedMeshRenderer 的 enabled 属性的动画。\n"
+msgstr "当 “复制启用 / 禁用状态的动画” 启用时，Merge Skinned Mesh 将创建控制合并目标 SkinnedMeshRenderer 的 enabled 属性的动画。\n"
 "因此，你不能手动对该属性进行动画。"
 
 msgid "MergeSkinnedMesh:copy-enablement-animation:error:too-many-activeness-animation"
-msgstr "以下合并目标网格的启用/禁用状态由多个属性共同决定。"
+msgstr "以下合并目标网格的启用 / 禁用状态由多个属性共同决定。"
 
 msgid "MergeSkinnedMesh:copy-enablement-animation:error:too-many-activeness-animation:description"
-msgstr "“复制启用/禁用状态的动画” 旨在将启用/禁用状态的动画复制到合并目标 SkinnedMeshRenderer 的 enabled 属性上。\n"
-"因此，如果同时有多个属性在控制启用/禁用状态（例如同时动画 Renderer 的 enabled 和 GameObject 的 activeSelf，或多个层级的 activeSelf），则无法复制。"
+msgstr "“复制启用 / 禁用状态的动画” 旨在将启用 / 禁用状态的动画复制到合并目标 SkinnedMeshRenderer 的 enabled 属性上。\n"
+"因此，如果同时有多个属性在控制启用 / 禁用状态（例如同时动画 Renderer 的 enabled 和 GameObject 的 activeSelf，或多个层级的 activeSelf），则无法复制。"
 
 msgid "MergeSkinnedMesh:copy-enablement-animation:error:activeness-animation-of-source-mismatch"
-msgstr "合并目标网格之间的启用/禁用状态动画不一致。"
+msgstr "合并目标网格之间的启用 / 禁用状态动画不一致。"
 
 msgid "MergeSkinnedMesh:copy-enablement-animation:error:activeness-animation-of-source-mismatch:description"
-msgstr "“复制启用/禁用状态的动画” 仅在合并目标网格的启用/禁用状态以相同的曲线和动画片段进行动画时才能生效。"
+msgstr "“复制启用 / 禁用状态的动画” 仅在合并目标网格的启用 / 禁用状态以相同的曲线和动画片段进行动画时才能生效。"
 
 # endregion
 
@@ -921,7 +921,7 @@ msgstr "忽略此组件"
 
 msgid "TraceAndOptimize:warn:unknown-type:autofix:dialog:message"
 msgstr ""
-"你正在尝试忽略未知组件"{0}"。\n"
+"你正在尝试忽略未知组件“{0}”。\n"
 "这将抑制对该组件的警告。\n"
 "（此设置可以在 Project Settings 的 Avatar Optimizer 部分中恢复）\n"
 "\n"
@@ -953,7 +953,7 @@ msgid "TraceAndOptimize:prop:removeZeroSizedPolygons"
 msgstr "自动删除面积为零的多边形"
 
 msgid "TraceAndOptimize:OptimizePhysBone:UnknownPhysBoneColliderShape"
-msgstr "指定了未知的 PhysBone Collider 形状"{0}"。"
+msgstr "指定了未知的 PhysBone Collider 形状“{0}”。"
 
 # endregion
 
@@ -1003,7 +1003,7 @@ msgstr ""
 #region ComponentInfos
 
 msgid "ComponentInfos:VRCAvatarDescriptor:warning:UnknownLipSyncStyle"
-msgstr "指定了未知的唇形同步类型"{0}"。"
+msgstr "指定了未知的唇形同步类型“{0}”。"
 
 msgid "ComponentInfos:VRCAvatarDescriptor:warning:UnknownLipSyncStyle:hint"
 msgstr "在大多数情况下，这是 Avatar Optimizer 的 Bug。如果看到此警告，请随上述消息一起报告此问题。"
@@ -1015,7 +1015,7 @@ msgid "ComponentInfos:VRCAvatarDescriptor:warning:UnknownColliderState:hint"
 msgstr "在大多数情况下，这是 Avatar Optimizer 的 Bug。如果看到此警告，请随上述消息一起报告此问题。"
 
 msgid "ComponentInfos:VRCAvatarDescriptor:warning:UnknownEyelidType"
-msgstr "指定了未知的眨眼类型"{0}"。"
+msgstr "指定了未知的眨眼类型“{0}”。"
 
 msgid "ComponentInfos:VRCAvatarDescriptor:warning:UnknownEyelidType:description"
 msgstr "在大多数情况下，这是 Avatar Optimizer 的 Bug。如果看到此警告，请随上述消息一起报告此问题。"
