@@ -1009,7 +1009,7 @@ msgid "ComponentInfos:VRCAvatarDescriptor:warning:UnknownLipSyncStyle:hint"
 msgstr "在大多数情况下，这是 Avatar Optimizer 的 Bug。如果看到此警告，请随上述消息一起报告此问题。"
 
 msgid "ComponentInfos:VRCAvatarDescriptor:warning:UnknownColliderState"
-msgstr "在 {1} 的 Standard Collider 中指定了未知的设置"{0}"。"
+msgstr "在 {1} 的 Standard Collider 中指定了未知的设置“{0}”。"
 
 msgid "ComponentInfos:VRCAvatarDescriptor:warning:UnknownColliderState:hint"
 msgstr "在大多数情况下，这是 Avatar Optimizer 的 Bug。如果看到此警告，请随上述消息一起报告此问题。"
